@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    container_name: student-feedback-backend
+    environment:
+      DB_PATH: /data/feedback.db
+    volumes:
+      - feedback-data:/data
+    networks:
+      - feedback-network
+
+  frontend:
+    build: ./frontend
+    container_name: student-feedback-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - feedback-network
+
+volumes:
+  feedback-data:
+
+networks:
+  feedback-network:

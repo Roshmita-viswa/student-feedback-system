@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feedback-backend
+  template:
+    metadata:
+      labels:
+        app: feedback-backend
+    spec:
+      containers:
+        - name: backend
+          image: student-feedback-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_PATH
+              value: /data/feedback.db
+          volumeMounts:
+            - name: feedback-storage
+              mountPath: /data
+      volumes:
+        - name: feedback-storage
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: feedback-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP
